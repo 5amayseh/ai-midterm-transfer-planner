@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Midterm - Transfer Planner</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 20px;
+      color: #222;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h1, h2 {
+      color: #1f4e79;
+    }
+
+    .program-box {
+      background-color: #e8f1fb;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 18px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      margin-bottom: 30px;
+    }
+
+    th {
+      background-color: #1f4e79;
+      color: white;
+      padding: 10px;
+    }
+
+    td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    select, button {
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #aaa;
+    }
+
+    button {
+      background-color: #1f4e79;
+      color: white;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    button:hover {
+      background-color: #163a59;
+    }
+
+    .note {
+      background-color: #fff7d6;
+      padding: 12px;
+      border-left: 5px solid #e0b000;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Student Program Transfer Planner</h1>
+
+    <div class="program-box">
+      <strong>Current Academic Program:</strong> Computer Engineering
+    </div>
+
+    <h2>My Courses</h2>
+
+    <table id="coursesTable">
+      <thead>
+        <tr>
+          <th>Course</th>
+          <th>Passed</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <h2>Select Target Program</h2>
+
+    <label for="targetProgram">Target program:</label>
+    <select id="targetProgram">
+      <option value="Civil Engineering">Civil Engineering</option>
+      <option value="Electrical and Electronics Engineering">Electrical and Electronics Engineering</option>
+      <option value="Computer Science">Computer Science</option>
+    </select>
+
+    <button onclick="transferCourses()">Transfer</button>
+
+    <div class="note">
+      Only passed courses are included in the equivalency table.
+    </div>
+
+    <h2>Equivalency Table</h2>
+
+    <table id="equivalencyTable" style="display:none;">
+      <thead>
+        <tr>
+          <th>My Program Course</th>
+          <th>Equivalent Course in New Program</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    const currentProgram = "Computer Engineering";
+
+    const courses = [
+      { course: "Calculus I", passed: "Yes" },
+      { course: "Physics I", passed: "Yes" },
+      { course: "Introduction to Programming", passed: "Yes" },
+      { course: "English I", passed: "Yes" },
+      { course: "Linear Algebra", passed: "No" },
+      { course: "Introduction to Artificial Intelligence", passed: "No" },
+      { course: "Digital Logic Design", passed: "Yes" },
+      { course: "Data Structures", passed: "Yes" },
+      { course: "Database Systems", passed: "No" },
+      { course: "Computer Networks", passed: "No" },
+
+      /* 5 additional courses from my program, considered passed */
+      { course: "Discrete Mathematics", passed: "Yes" },
+      { course: "Object Oriented Programming", passed: "Yes" },
+      { course: "Operating Systems", passed: "Yes" },
+      { course: "Software Engineering", passed: "Yes" },
+      { course: "Computer Architecture", passed: "Yes" }
+    ];
+
+    function displayCourses() {
+      const tbody = document.querySelector("#coursesTable tbody");
+      tbody.innerHTML = "";
+
+      courses.forEach(item => {
+        const row = document.createElement("tr");
+
+        const courseCell = document.createElement("td");
+        courseCell.textContent = item.course;
+
+        const passedCell = document.createElement("td");
+        passedCell.textContent = item.passed;
+
+        row.appendChild(courseCell);
+        row.appendChild(passedCell);
+        tbody.appendChild(row);
+      });
+    }
+
+    function getEquivalentCourse(course, targetProgram) {
+      const equivalencies = {
+        "Computer Science": {
+          "Calculus I": "Calculus I",
+          "Physics I": "General Physics",
+          "Introduction to Programming": "Programming Fundamentals",
+          "English I": "English Language I",
+          "Digital Logic Design": "Computer Organization Basics",
+          "Data Structures": "Data Structures",
+          "Discrete Mathematics": "Discrete Structures",
+          "Object Oriented Programming": "Object Oriented Programming",
+          "Operating Systems": "Operating Systems",
+          "Software Engineering": "Software Engineering",
+          "Computer Architecture": "Computer Architecture"
+        },
+
+        "Electrical and Electronics Engineering": {
+          "Calculus I": "Calculus I",
+          "Physics I": "Physics for Engineers",
+          "Introduction to Programming": "Programming for Engineers",
+          "English I": "English Language I",
+          "Digital Logic Design": "Digital Systems",
+          "Data Structures": "N/A",
+          "Discrete Mathematics": "Engineering Mathematics",
+          "Object Oriented Programming": "N/A",
+          "Operating Systems": "N/A",
+          "Software Engineering": "N/A",
+          "Computer Architecture": "Microprocessors"
+        },
+
+        "Civil Engineering": {
+          "Calculus I": "Calculus I",
+          "Physics I": "Engineering Physics",
+          "Introduction to Programming": "Computer Applications in Engineering",
+          "English I": "English Language I",
+          "Digital Logic Design": "N/A",
+          "Data Structures": "N/A",
+          "Discrete Mathematics": "Engineering Mathematics",
+          "Object Oriented Programming": "N/A",
+          "Operating Systems": "N/A",
+          "Software Engineering": "N/A",
+          "Computer Architecture": "N/A"
+        }
+      };
+
+      if (equivalencies[targetProgram][course]) {
+        return equivalencies[targetProgram][course];
+      } else {
+        return "N/A";
+      }
+    }
+
+    function transferCourses() {
+      const targetProgram = document.getElementById("targetProgram").value;
+      const table = document.getElementById("equivalencyTable");
+      const tbody = document.querySelector("#equivalencyTable tbody");
+
+      tbody.innerHTML = "";
+
+      const passedCourses = courses.filter(item => item.passed === "Yes");
+
+      passedCourses.forEach(item => {
+        const row = document.createElement("tr");
+
+        const myCourseCell = document.createElement("td");
+        myCourseCell.textContent = item.course;
+
+        const equivalentCell = document.createElement("td");
+        equivalentCell.textContent = getEquivalentCourse(item.course, targetProgram);
+
+        row.appendChild(myCourseCell);
+        row.appendChild(equivalentCell);
+        tbody.appendChild(row);
+      });
+
+      table.style.display = "table";
+    }
+
+    window.onload = displayCourses;
+  </script>
+</body>
+</html>
